@@ -27,5 +27,5 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> data","S'",1,None,None,None),
-  ('data -> NOMBRE APELLIDO1 APELLIDO2 FECHA SEXO ESTADO','data',6,'p_data','parser.py',18),
+  ('data -> NOMBRE APELLIDO1 APELLIDO2 FECHA SEXO ESTADO','data',6,'p_data','parser.py',17),
 ]
