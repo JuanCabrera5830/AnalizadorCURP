@@ -64,6 +64,7 @@ def handler():
     try:
         data = request.get_json()
         print("DEBUG recibido:", data, file=sys.stderr)
+
         nombre = data.get('nombre', '')
         apellido1 = data.get('apellido1', '')
         apellido2 = data.get('apellido2', '')
@@ -76,8 +77,14 @@ def handler():
         if errores:
             return jsonify({"errores": errores}), 400
 
-        datos_para_parse = f"NOMBRE={nombre}\nAPELLIDO1={apellido1}\nAPELLIDO2={apellido2}\nFECHA={fecha}\nSEXO={sexo}\nESTADO={estado}"
-        datos_para_parse = datos_para_parse.strip().upper()
+        datos_para_parse = (
+            f"NOMBRE={nombre}\n"
+            f"APELLIDO1={apellido1}\n"
+            f"APELLIDO2={apellido2}\n"
+            f"FECHA={fecha}\n"
+            f"SEXO={sexo}\n"
+            f"ESTADO={estado}"
+        ).strip().upper()
         print("DEBUG parse datos:", datos_para_parse, file=sys.stderr)
 
         curp = parse_input(datos_para_parse)
@@ -86,6 +93,7 @@ def handler():
             return jsonify({"errores": [str(curp)]}), 400
 
         return jsonify({"curp": curp})
+
     except Exception as e:
         print("ERROR interno:", str(e), file=sys.stderr)
         return jsonify({"errores": ["Error interno del servidor"]}), 500
