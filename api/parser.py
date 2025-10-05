@@ -30,6 +30,7 @@ def generar_curp(ap1, ap2, nombre, fecha, sexo, estado):
 
     year, month, day = fecha.split('-')
     curp += year[2:] + month + day
+
     curp += sexo
 
     clave_estado = estados_clave.get(estado.upper(), "NE")

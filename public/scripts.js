@@ -25,6 +25,7 @@ document.getElementById('curp-form').addEventListener('submit', async function(e
   const respuesta = await res.json();
 
   if (res.ok) {
+    // Mostrar la CURP en un cuadro estilizado
     curpCuadro.innerHTML = `
       <div class="result">
         <h2>CURP Generada:</h2>

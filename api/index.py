@@ -9,18 +9,19 @@ app = Flask(__name__)
 def es_nombre_posible(valor):
     if len(valor) < 3:
         return False
-    v = valor.upper()
-    if not any(c in "AEIOUÁÉÍÓÚ" for c in v):
+    valor = valor.upper()
+    if not any(c in "AEIOUÁÉÍÓÚ" for c in valor):
         return False
-    if re.search(r'[BCDFGHJKLMNÑPQRSTVWXYZ]{4,}', v):
+    if re.search(r'[BCDFGHJKLMNÑPQRSTVWXYZ]{4,}', valor):
         return False
     return True
 
 def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
     errores = []
     caracteres_validos = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ "
-    campos = {'Nombre': nombre, 'Apellido paterno': apellido1}
-    for campo, valor in campos.items():
+    campos_obligatorios = {'Nombre': nombre, 'Apellido paterno': apellido1}
+
+    for campo, valor in campos_obligatorios.items():
         if not valor or len(valor.strip()) < 4:
             errores.append(f"{campo} no puede estar vacío o incompleto (mínimo 4 letras).")
         elif not all(c in caracteres_validos for c in valor.upper()):
@@ -39,63 +40,57 @@ def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
     try:
         datetime.strptime(fecha, "%Y-%m-%d")
     except ValueError:
-        errores.append("Fecha de nacimiento inválida. Debe tener formato YYYY-MM-DD.")
+        errores.append("Fecha de nacimiento inválida.")
 
     if sexo not in ['H', 'M']:
-        errores.append("Sexo inválido. Debe ser 'H' o 'M'.")
+        errores.append("Sexo inválido.")
 
-    estados = [
-        "AGUASCALIENTES", "BAJA CALIFORNIA", "BAJA CALIFORNIA SUR",
-        "CAMPECHE", "COAHUILA", "COLIMA", "CHIAPAS", "CHIHUAHUA",
-        "CIUDAD DE MEXICO", "DURANGO", "GUANAJUATO", "GUERRERO",
-        "HIDALGO", "JALISCO", "ESTADO DE MEXICO", "MICHOACAN",
-        "MORELOS", "NAYARIT", "NUEVO LEON", "OAXACA", "PUEBLA",
-        "QUERETARO", "QUINTANA ROO", "SAN LUIS POTOSI", "SINALOA",
-        "SONORA", "TABASCO", "TAMAULIPAS", "TLAXCALA", "VERACRUZ",
+    estados_validos = [
+        "AGUASCALIENTES", "BAJA CALIFORNIA", "BAJA CALIFORNIA SUR", "CAMPECHE",
+        "COAHUILA", "COLIMA", "CHIAPAS", "CHIHUAHUA", "CIUDAD DE MEXICO",
+        "DURANGO", "GUANAJUATO", "GUERRERO", "HIDALGO", "JALISCO",
+        "ESTADO DE MEXICO", "MICHOACAN", "MORELOS", "NAYARIT", "NUEVO LEON",
+        "OAXACA", "PUEBLA", "QUERETARO", "QUINTANA ROO", "SAN LUIS POTOSI",
+        "SINALOA", "SONORA", "TABASCO", "TAMAULIPAS", "TLAXCALA", "VERACRUZ",
         "YUCATAN", "ZACATECAS", "NACIDO EN EL EXTRANJERO"
     ]
-    if estado.upper() not in estados:
-        errores.append("Estado inválido. Selecciona uno válido.")
+    if estado.upper() not in estados_validos:
+        errores.append("Estado inválido.")
 
     return errores
 
-@app.route("/", methods=["POST"])
+@app.route('/', methods=['POST'])
 def handler():
-    try:
-        data = request.get_json()
-        print("DEBUG recibido:", data, file=sys.stderr)
+    data = request.get_json()
+    print("DEBUG: datos recibidos:", data, file=sys.stderr)
 
-        nombre = data.get('nombre', '')
-        apellido1 = data.get('apellido1', '')
-        apellido2 = data.get('apellido2', '')
-        fecha = data.get('fecha', '')
-        sexo = data.get('sexo', '')
-        estado = data.get('estado', '')
+    nombre = data.get('nombre', '')
+    apellido1 = data.get('apellido1', '')
+    apellido2 = data.get('apellido2', '')
+    fecha = data.get('fecha', '')
+    sexo = data.get('sexo', '')
+    estado = data.get('estado', '')
 
-        errores = validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado)
-        print("DEBUG errores:", errores, file=sys.stderr)
-        if errores:
-            return jsonify({"errores": errores}), 400
+    errores = validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado)
+    print("DEBUG: errores de validación:", errores, file=sys.stderr)
+    if errores:
+        return jsonify({"errores": errores}), 400
 
-        datos_para_parse = (
-            f"NOMBRE={nombre}\n"
-            f"APELLIDO1={apellido1}\n"
-            f"APELLIDO2={apellido2}\n"
-            f"FECHA={fecha}\n"
-            f"SEXO={sexo}\n"
-            f"ESTADO={estado}"
-        ).strip().upper()
-        print("DEBUG parse datos:", datos_para_parse, file=sys.stderr)
+    datos_para_parse = f"""
+    NOMBRE={nombre}
+    APELLIDO1={apellido1}
+    APELLIDO2={apellido2}
+    FECHA={fecha}
+    SEXO={sexo}
+    ESTADO={estado}
+    """.strip().upper()
+    print("DEBUG: datos_para_parse:", datos_para_parse, file=sys.stderr)
 
-        curp = parse_input(datos_para_parse)
-        print("DEBUG curp:", curp, file=sys.stderr)
-        if "Error" in str(curp):
-            return jsonify({"errores": [str(curp)]}), 400
+    curp = parse_input(datos_para_parse)
+    print("DEBUG: resultado parse_input:", curp, file=sys.stderr)
+    if "Error" in str(curp):
+        return jsonify({"errores": [str(curp)]}), 400
 
-        return jsonify({"curp": curp})
-
-    except Exception as e:
-        print("ERROR interno:", str(e), file=sys.stderr)
-        return jsonify({"errores": ["Error interno del servidor"]}), 500
+    return jsonify({"curp": curp})
 
 handler = app
