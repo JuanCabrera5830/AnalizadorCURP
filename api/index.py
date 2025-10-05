@@ -40,10 +40,10 @@ def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
     try:
         datetime.strptime(fecha, "%Y-%m-%d")
     except ValueError:
-        errores.append("Fecha de nacimiento inválida.")
+        errores.append("Fecha de nacimiento inválida. Debe tener formato YYYY-MM-DD.")
 
     if sexo not in ['H', 'M']:
-        errores.append("Sexo inválido.")
+        errores.append("Sexo inválido. Debe ser 'H' o 'M'.")
 
     estados_validos = [
         "AGUASCALIENTES", "BAJA CALIFORNIA", "BAJA CALIFORNIA SUR", "CAMPECHE",
@@ -55,13 +55,14 @@ def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
         "YUCATAN", "ZACATECAS", "NACIDO EN EL EXTRANJERO"
     ]
     if estado.upper() not in estados_validos:
-        errores.append("Estado inválido.")
+        errores.append("Estado inválido. Selecciona uno válido.")
 
     return errores
 
 @app.route('/', methods=['POST'])
 def handler():
     data = request.get_json()
+    # Debug logs para revisar en los logs de Vercel
     print("DEBUG: datos recibidos:", data, file=sys.stderr)
 
     nombre = data.get('nombre', '')
@@ -88,6 +89,7 @@ def handler():
 
     curp = parse_input(datos_para_parse)
     print("DEBUG: resultado parse_input:", curp, file=sys.stderr)
+
     if "Error" in str(curp):
         return jsonify({"errores": [str(curp)]}), 400
 
