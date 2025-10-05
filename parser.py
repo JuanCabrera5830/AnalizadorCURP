@@ -47,9 +47,9 @@ def generar_curp(ap1, ap2, nombre, fecha, sexo, estado):
 
     anio = int(year)
     if anio > 2000:
-        curp +='AO'
+        curp +='A0'
     else:
-        curp +='OO'
+        curp +='00'
 
     return curp.upper()
 

@@ -67,10 +67,19 @@ def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
 
     return errores
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    curp=""
-    errores=[]
+    curp = ""
+    errores = []
+
+    # Inicializar variables vacías
+    nombre = ''
+    apellido1 = ''
+    apellido2 = ''
+    fecha = ''
+    sexo = ''
+    estado = ''
+
     if request.method == 'POST':
         nombre = request.form.get('nombre', '')
         apellido1 = request.form.get('apellido1', '')
@@ -80,22 +89,23 @@ def index():
         estado = request.form.get('estado', '')
 
         errores = validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado)
-    if not errores:
-        datos = f"""
-    NOMBRE={nombre}
-    APELLIDO1={apellido1}
-    APELLIDO2={apellido2}
-    FECHA={fecha}
-    SEXO={sexo}
-    ESTADO={estado}
-    """.strip().upper()
 
-    curp = parse_input(datos)
-    if "Error" in curp:
-        errores.append(curp)
-        curp = ""
+        if not errores:
+            datos = f"""
+            NOMBRE={nombre}
+            APELLIDO1={apellido1}
+            APELLIDO2={apellido2}
+            FECHA={fecha}
+            SEXO={sexo}
+            ESTADO={estado}
+            """.strip().upper()
+
+            curp = parse_input(datos)
+            if "Error" in curp:
+                errores.append(curp)
+                curp = ""
 
     return render_template('index.html', curp=curp, errores=errores)
 
-if __name__=='__main__':
-    app.run(debug=true)
+if __name__ == '__main__':
+    app.run(debug=True)

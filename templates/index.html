@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Generador de CURP</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css')
+}}">
   <style>
     .errors {
       background-color: #f8d7da;
@@ -24,23 +25,23 @@
     <h1>Generador de CURP</h1>
     <form method="post">
       <label>Nombre(s):</label>
-      <input type="text" name="nombre" required /><br />
+      <input type="text" name="nombre" required><br>
 
       <label>Primer apellido:</label>
-      <input type="text" name="apellido1" required /><br />
+      <input type="text" name="apellido1" required><br>
 
       <label>Segundo apellido:</label>
-      <input type="text" name="apellido2" /><br />
+      <input type="text" name="apellido2"><br>
 
       <label>Fecha de nacimiento:</label>
-      <input type="date" name="fecha" required /><br />
+      <input type="date" name="fecha" required><br>
 
       <label>Sexo:</label>
       <select name="sexo" required>
         <option value="">-- Selecciona --</option>
         <option value="H">Hombre</option>
         <option value="M">Mujer</option>
-      </select><br />
+      </select><br>
 
       <label>Estado:</label>
       <select name="estado" required>
@@ -78,7 +79,7 @@
         <option value="YUCATAN">Yucatán</option>
         <option value="ZACATECAS">Zacatecas</option>
         <option value="NACIDO EN EL EXTRANJERO">Nacido en el extranjero</option>
-      </select><br />
+      </select><br>
 
       <input type="submit" value="Generar CURP" />
     </form>
