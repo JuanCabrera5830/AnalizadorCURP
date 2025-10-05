@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generador de CURP</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Generador de CURP</h1>
+    <form id="curp-form">
+      <label>Nombre(s):</label>
+      <input type="text" name="nombre" required /><br />
+
+      <label>Primer apellido:</label>
+      <input type="text" name="apellido1" required /><br />
+
+      <label>Segundo apellido:</label>
+      <input type="text" name="apellido2" /><br />
+
+      <label>Fecha de nacimiento:</label>
+      <input type="date" name="fecha" required /><br />
+
+      <label>Sexo:</label>
+      <select name="sexo" required>
+        <option value="">-- Selecciona --</option>
+        <option value="H">Hombre</option>
+        <option value="M">Mujer</option>
+      </select><br />
+
+      <label>Estado:</label>
+      <select name="estado" required>
+        <option value="">-- Selecciona un estado --</option>
+        <option value="AGUASCALIENTES">Aguascalientes</option>
+        <option value="BAJA CALIFORNIA">Baja California</option>
+        <option value="BAJA CALIFORNIA SUR">Baja California Sur</option>
+        <option value="CAMPECHE">Campeche</option>
+        <option value="COAHUILA">Coahuila</option>
+        <option value="COLIMA">Colima</option>
+        <option value="CHIAPAS">Chiapas</option>
+        <option value="CHIHUAHUA">Chihuahua</option>
+        <option value="CIUDAD DE MEXICO">Ciudad de México</option>
+        <option value="DURANGO">Durango</option>
+        <option value="GUANAJUATO">Guanajuato</option>
+        <option value="GUERRERO">Guerrero</option>
+        <option value="HIDALGO">Hidalgo</option>
+        <option value="JALISCO">Jalisco</option>
+        <option value="ESTADO DE MEXICO">Estado de México</option>
+        <option value="MICHOACAN">Michoacán</option>
+        <option value="MORELOS">Morelos</option>
+        <option value="NAYARIT">Nayarit</option>
+        <option value="NUEVO LEON">Nuevo León</option>
+        <option value="OAXACA">Oaxaca</option>
+        <option value="PUEBLA">Puebla</option>
+        <option value="QUERETARO">Querétaro</option>
+        <option value="QUINTANA ROO">Quintana Roo</option>
+        <option value="SAN LUIS POTOSI">San Luis Potosí</option>
+        <option value="SINALOA">Sinaloa</option>
+        <option value="SONORA">Sonora</option>
+        <option value="TABASCO">Tabasco</option>
+        <option value="TAMAULIPAS">Tamaulipas</option>
+        <option value="TLAXCALA">Tlaxcala</option>
+        <option value="VERACRUZ">Veracruz</option>
+        <option value="YUCATAN">Yucatán</option>
+        <option value="ZACATECAS">Zacatecas</option>
+        <option value="NACIDO EN EL EXTRANJERO">Nacido en el extranjero</option>
+      </select><br />
+
+      <input type="submit" value="Generar CURP" />
+    </form>
+
+    <div id="curp-cuadro" class="result-box"></div>
+    <div id="errores-box" class="errors"></div>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

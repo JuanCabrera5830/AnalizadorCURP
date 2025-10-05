@@ -1,0 +1,101 @@
+Mi proyecto es una aplicación web desarrollada con Flask que genera una CURP a partir de un formulario HTML. 
+Se aplicaron múltiples reglas de diseño estructural, validación de datos y procesamiento léxico-sintáctico.
+
+main.py: Archivo principal que ejecuta la app Flask, maneja peticiones y valida entrada.
+parser.py: Define la gramática de análisis sintáctico (con PLY) para construir la CURP.
+lexer.py: Analiza los tokens del texto de entrada usando PLY (lexical analysis).
+index.html: Formulario frontend que captura datos del usuario.
+style.css: Estilos separados del HTML (separación de responsabilidades).
+
+Decoradores @app.route(): Se usa para definir rutas en Flask (/ para mostrar formulario y procesar POST).
+
+Renderizado de plantilla con render_template(): Se usa Jinja2 para enviar variables (curp, errores) al HTML.
+
+Método POST del formulario: Flask captura los datos del usuario para procesarlos.
+
+Validación de entrada personalizada: Con reglas que imitan validaciones reales (por ejemplo, que el nombre tenga vocales, mínimo de letras, etc.).
+
+El archivo main.py contiene funciones específicas como:
+
+es_nombre_posible(valor):
+
+Evalúa si el nombre o apellido parece real:
+
+Tiene al menos 3 letras.
+
+Tiene al menos una vocal.
+
+No tiene muchas consonantes seguidas (probable error o dato falso).
+
+validar_entrada(...):
+
+Valida que todos los datos cumplan reglas como:
+
+Letras permitidas (con acentos y Ñ).
+
+Formato de fecha correcto (YYYY-MM-DD).
+
+Valores válidos en sexo y estado.
+
+Muestra mensajes personalizados de error si algo no cumple.
+
+Reglas en lexer.py:
+
+Cada token (NOMBRE, APELLIDO1, etc.) se define como una expresión regular 
+que detecta los valores en una línea como:
+
+NOMBRE=JUAN
+APELLIDO1=PEREZ
+
+Se ignoran saltos de línea y errores inesperados lanzan excepciones.
+
+Reglas en parser.py:
+
+Se define la estructura esperada:
+
+data : NOMBRE APELLIDO1 APELLIDO2 FECHA SEXO ESTADO
+
+Si se encuentra esta estructura y se validan los tokens, se llama a generar_curp(...).
+
+Dentro de generar_curp(...):
+
+Se siguen reglas reales del gobierno mexicano para formar una CURP:
+
+Primera letra y vocal interna del apellido paterno.
+
+Primera letra del apellido materno (o 'X' si no se proporciona).
+
+Primera letra del nombre.
+
+Fecha de nacimiento (AAMMDD).
+
+Sexo (H o M).
+
+Clave de estado (estado_clave.get(...)).
+
+Consonantes internas de los nombres.
+
+Dígito diferenciador (A0 para nacidos después de 2000, 00 para antes).
+
+Usa HTML semántico para un formulario de entrada de datos.
+
+Cada campo tiene un label asociado → accesibilidad.
+
+Usa required en campos obligatorios → validación en navegador.
+
+Soporte para mostrar errores dinámicos y CURP generada:
+
+{% if errores %}
+{% if curp %}
+
+Los estilos están separados en style.css, con buena presentación visual.
+
+Sigue buenas prácticas:
+
+Diseño limpio, responsive.
+
+Estilo visual para errores (.errors) y resultados (.result).
+
+Hover para botón submit.
+
+Uso de box-shadow, border-radius, etc. para un diseño moderno.
