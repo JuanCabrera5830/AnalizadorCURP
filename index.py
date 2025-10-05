@@ -1,25 +1,33 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request 
 from parser import parse_input
 from datetime import datetime
 import re
-import sys
 
 app = Flask(__name__)
 
 def es_nombre_posible(valor):
+    """Valida si un nombre/apellido parece real."""
     if len(valor) < 3:
         return False
+    
     valor = valor.upper()
+
     if not any(c in "AEIOUÁÉÍÓÚ" for c in valor):
         return False
+    
     if re.search(r'[BCDFGHJKLMNÑPQRSTVWXYZ]{4,}', valor):
         return False
+    
     return True
 
 def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
     errores = []
     caracteres_validos = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ "
-    campos_obligatorios = {'Nombre': nombre, 'Apellido paterno': apellido1}
+
+    campos_obligatorios = {
+        'Nombre': nombre, 
+        'Apellido paterno': apellido1
+    }
 
     for campo, valor in campos_obligatorios.items():
         if not valor or len(valor.strip()) < 4:
@@ -60,23 +68,20 @@ def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
     return errores
 
 @app.route('/', methods=['POST'])
-def handler():
-    data = request.get_json()
-    print("DEBUG: datos recibidos:", data, file=sys.stderr)
+def index():
+    curp=""
+    errores=[]
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '')
+        apellido1 = request.form.get('apellido1', '')
+        apellido2 = request.form.get('apellido2', '')
+        fecha = request.form.get('fecha', '')
+        sexo = request.form.get('sexo', '')
+        estado = request.form.get('estado', '')
 
-    nombre = data.get('nombre', '')
-    apellido1 = data.get('apellido1', '')
-    apellido2 = data.get('apellido2', '')
-    fecha = data.get('fecha', '')
-    sexo = data.get('sexo', '')
-    estado = data.get('estado', '')
-
-    errores = validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado)
-    print("DEBUG: errores de validación:", errores, file=sys.stderr)
-    if errores:
-        return jsonify({"errores": errores}), 400
-
-    datos_para_parse = f"""
+        errores = validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado)
+    if not errores:
+        datos = f"""
     NOMBRE={nombre}
     APELLIDO1={apellido1}
     APELLIDO2={apellido2}
@@ -84,13 +89,13 @@ def handler():
     SEXO={sexo}
     ESTADO={estado}
     """.strip().upper()
-    print("DEBUG: datos_para_parse:", datos_para_parse, file=sys.stderr)
 
-    curp = parse_input(datos_para_parse)
-    print("DEBUG: resultado parse_input:", curp, file=sys.stderr)
-    if "Error" in str(curp):
-        return jsonify({"errores": [str(curp)]}), 400
+    curp = parse_input(datos)
+    if "Error" in curp:
+        errores.append(curp)
+        curp = ""
 
-    return jsonify({"curp": curp})
+    return render_template('index.html', curp=curp, errores=errores)
 
-handler = app
+if __name__=='__main__':
+    app.run(debug=true)

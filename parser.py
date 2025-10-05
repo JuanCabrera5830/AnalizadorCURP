@@ -22,9 +22,11 @@ def p_error(p):
 
 def generar_curp(ap1, ap2, nombre, fecha, sexo, estado):
     curp = ap1[0]
+
     vocales = 'AEIOU'
     interna = next((c for c in ap1[1:] if c in vocales), 'X')
     curp += interna
+
     curp += ap2[0] if ap2 else 'X'
     curp += nombre[0]
 
@@ -43,7 +45,11 @@ def generar_curp(ap1, ap2, nombre, fecha, sexo, estado):
     curp += consonante_interna(ap2)
     curp += consonante_interna(nombre)
 
-    curp += 'A0' if int(year) > 2000 else '00'
+    anio = int(year)
+    if anio > 2000:
+        curp +='AO'
+    else:
+        curp +='OO'
 
     return curp.upper()
 
