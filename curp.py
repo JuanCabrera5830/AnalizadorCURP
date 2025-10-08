@@ -9,15 +9,19 @@ def es_nombre_posible(valor):
     """Valida si un nombre/apellido parece real."""
     if len(valor) < 3:
         return False
-    
+
     valor = valor.upper()
+
+    # Verificar si hay 2 o más letras iguales consecutivas
+    if re.search(r'(.)\1{1,}', valor):  # dos o más letras iguales seguidas
+        return False
 
     if not any(c in "AEIOUÁÉÍÓÚ" for c in valor):
         return False
-    
+
     if re.search(r'[BCDFGHJKLMNÑPQRSTVWXYZ]{4,}', valor):
         return False
-    
+
     return True
 
 def validar_entrada(nombre, apellido1, apellido2, fecha, sexo, estado):
